@@ -1,6 +1,8 @@
 
 export type KaratsubaFormProps = {
-    onProductCalculation: (result: any) => void
+    onProductCalculation: (result: any) => void,
+    onMultiplicandChange?: (value: string) => void,
+    onMultiplierChange?: (value: string) => void 
   }
 
   export type KaratsubaProductStepsProps = {

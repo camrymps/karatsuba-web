@@ -15,7 +15,7 @@ const navigation = [
   { name: "Try It", href: "#", current: true },
   { name: "Why Karatsuba?", href: "#", current: false },
   { name: "History", href: "#", current: false },
-  { name: "Resources", href: "#", current: false },
+  { name: "Additional Resources", href: "#", current: false },
 ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -28,9 +28,11 @@ function classNames(...classes: any[]) {
 }
 
 function App() {
-  const [product, setProduct] = useState<number>(0);
+  const [product, setProduct] = useState<number>(-1);
   const [steps, setSteps] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [multiplicand, setMultiplicand] = useState<string>("");
+  const [multiplier, setMultiplier] = useState<string>("");
 
   const changeStep = (index: any) => {
     setCurrentStep(index);
@@ -210,99 +212,119 @@ function App() {
               Multiplication using the Karatsuba method
             </h1>
             <p className="text-md font-medium text-white mt-3 uppercase">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.
             </p>
           </div>
         </header>
       </div>
       <main className="-mt-32">
         <div className="max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
-          {/* Replace with your content */}
           <KaratsubaForm
             onProductCalculation={(result: any) => {
               setProduct(result.product);
               setSteps(result.steps);
+              setCurrentStep(1);
             }}
+            onMultiplicandChange={(value: string) => setMultiplicand(value)}
+            onMultiplierChange={(value: string) => setMultiplier(value)}
           />
-          {/* /End replace */}
         </div>
-        <div className="max-w-7xl mx-auto pb-16 px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center mb-2">
-            <div className="text-2xl font-bold uppercase text-gray-700">
-              Product
+        {product !== -1 && (
+          <>
+            <div className="max-w-7xl mx-auto pb-16 px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-center mb-2">
+                <div className="text-2xl font-bold uppercase text-gray-700">
+                  Operation
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <div className="text-5xl font-bold text-gray-500">
+                  {multiplicand} × {multiplier}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex justify-center">
-            <div className="text-6xl font-bold text-indigo-500">
-              {product.toLocaleString("en-us")}
+            <div className="max-w-7xl mx-auto pb-16 px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-center mb-2">
+                <div className="text-2xl font-bold uppercase text-gray-700">
+                  Product
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <div className="text-6xl font-bold text-indigo-500">
+                  {product.toLocaleString("en-us")}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 border border-gray-200 bg-gray-100 rounded-lg">
-          <div className="text-center">
-            <div className="text-2xl font-bold uppercase text-gray-700">
-              Solution Steps
-            </div>
-            <p className="text-gray-500">
-              This solution has <b>{steps.length}</b> steps.
-            </p>
-          </div>
-          <div className="bg-white overflow-hidden shadow rounded-lg mt-10">
-            <div className="flex justify-center">
-              <KaratsubaProductSteps steps={steps} currentStep={currentStep} />
-            </div>
-          </div>
-          <nav
-            className="flex items-center justify-center mt-10"
-            aria-label="Progress"
-          >
-            <p className="text-sm font-medium">
-              Step {currentStep} of {steps.length}
-            </p>
-            <ol role="list" className="ml-8 flex items-center space-x-5">
-              {steps.map((step, index) => (
-                <li
-                  key={`step-${step.number}`}
-                  onClick={() => changeStep(index)}
-                >
-                  {currentStep > index ? (
-                    <a
-                      onClick={() => changeStep(index)}
-                      className="block w-2.5 h-2.5 bg-indigo-600 rounded-full hover:bg-indigo-900"
-                    >
-                      <span className="sr-only">{step.number}</span>
-                    </a>
-                  ) : step.number === index + 1 ? (
-                    <a
-                      onClick={() => changeStep(index)}
-                      className="relative flex items-center justify-center"
-                      aria-current="step"
-                    >
-                      <span
-                        className="absolute w-5 h-5 p-px flex"
-                        aria-hidden="true"
+            <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 border border-gray-200 bg-gray-100 rounded-lg">
+              <div className="text-center">
+                <div className="text-2xl font-bold uppercase text-gray-700">
+                  Solution Steps
+                </div>
+                <p className="text-gray-500">
+                  This solution has <b>{steps.length}</b> steps.
+                </p>
+              </div>
+              <div className="bg-white overflow-hidden shadow rounded-lg mt-10">
+                <div className="flex justify-center">
+                  <KaratsubaProductSteps
+                    steps={steps}
+                    currentStep={currentStep}
+                  />
+                </div>
+              </div>
+              <nav
+                className="flex items-center justify-center mt-10"
+                aria-label="Progress"
+              >
+                <p className="text-sm font-medium">
+                  Step {currentStep} of {steps.length}
+                </p>
+                <ol role="list" className="ml-8 flex items-center space-x-5">
+                  {steps.map((step, index: number) => {
+                    const stepNumber: number = index + 1;
+
+                    return (
+                      <li
+                        key={`step-${stepNumber}`}
+                        onClick={() => changeStep(stepNumber)}
                       >
-                        <span className="w-full h-full rounded-full bg-indigo-200" />
-                      </span>
-                      <span
-                        className="relative block w-2.5 h-2.5 bg-indigo-600 rounded-full"
-                        aria-hidden="true"
-                      />
-                      <span className="sr-only">{step.number}</span>
-                    </a>
-                  ) : (
-                    <a
-                      onClick={() => changeStep(index)}
-                      className="block w-2.5 h-2.5 bg-gray-200 rounded-full hover:bg-gray-400"
-                    >
-                      <span className="sr-only">{step.number}</span>
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </nav>
-        </div>
+                        {currentStep > stepNumber ? (
+                          <a className="block w-2.5 h-2.5 bg-indigo-600 rounded-full hover:bg-indigo-900">
+                            <span className="sr-only">{stepNumber}</span>
+                          </a>
+                        ) : step.number === currentStep ? (
+                          <a
+                            className="relative flex items-center justify-center"
+                            aria-current="step"
+                          >
+                            <span
+                              className="absolute w-5 h-5 p-px flex"
+                              aria-hidden="true"
+                            >
+                              <span className="w-full h-full rounded-full bg-indigo-200" />
+                            </span>
+                            <span
+                              className="relative block w-2.5 h-2.5 bg-indigo-600 rounded-full"
+                              aria-hidden="true"
+                            />
+                            <span className="sr-only">{stepNumber}</span>
+                          </a>
+                        ) : (
+                          <a className="block w-2.5 h-2.5 bg-gray-200 rounded-full hover:bg-gray-400">
+                            <span className="sr-only">{stepNumber}</span>
+                          </a>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ol>
+              </nav>
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

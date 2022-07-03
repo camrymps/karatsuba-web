@@ -9,15 +9,32 @@ type Test = {
 
 export default function KaratsubaForm({
   onProductCalculation,
+  onMultiplicandChange,
+  onMultiplierChange,
 }: KaratsubaFormProps) {
-  const [multiplicand, setMulitplicand] = useState<string>("0");
-  const [multiplier, setMultiplier] = useState<string>("0");
+  const [multiplicand, setMulitplicand] = useState<string>("");
+  const [multiplier, setMultiplier] = useState<string>("");
 
-  const getProduct = (x: number, y: number, s: any[]): Test => {
-    if (x < 10 && y < 10)
+  const getProduct = (
+    x: number,
+    y: number,
+    initialMultiplicand: number,
+    initialMultiplier: number,
+    steps: any[]
+  ): Test => {
+    if (x < 10 && y < 10) {
+      /* steps.push({
+        number: steps.length + 1,
+        equation: [`${x}`, `${y}`],     
+        subSteps: [
+          `<span class="text-blue-500">${x}</span> × <span class="text-green-500">${y}</span> = ${x * y}`
+        ]
+      }) */
+
       return {
         product: x * y,
       };
+    }
 
     const n: number = Math.max(x.toString().length, y.toString().length);
     const m: number = Math.ceil(n / 2);
@@ -25,44 +42,130 @@ export default function KaratsubaForm({
     const xH: number = Math.floor(x / Math.pow(10, m));
     const xL: number = x % Math.pow(10, m);
 
+    console.log(xH)
+
     const yH: number = Math.floor(y / Math.pow(10, m));
     const yL: number = y % Math.pow(10, m);
 
-    const a: number = getProduct(xH, yH, s).product;
-    const d: number = getProduct(xL, yL, s).product;
-    const e: number = getProduct(xH + xL, yH + yL, s).product - a - d;
+    console.log(yH)
+
+    const a: number = getProduct(
+      xH,
+      yH,
+      initialMultiplicand,
+      initialMultiplier,
+      steps
+    ).product;
+
+    const d: number = getProduct(
+      xL,
+      yL,
+      initialMultiplicand,
+      initialMultiplier,
+      steps
+    ).product;
+    const e: number =
+      getProduct(
+        xH + xL,
+        yH + yL,
+        initialMultiplicand,
+        initialMultiplier,
+        steps
+      ).product -
+      a -
+      d;
 
     const product = a * Math.pow(10, m * 2) + e * Math.pow(10, m) + d;
 
-    if (e > 0)
-      s.push({
-        number: s.length + 1,
-        subSteps: [
-          `<span class="text-gray-500">Step ${s.length + 1}, "divide and conquer"</span> - <span class="text-blue-500">${xH}</span><span class="text-green-500">${xL}</span> × <span class="text-blue-500">${yH}</span><span class="text-green-500">${yL}</span>`,
-          `<span class="text-blue-500">${xH}</span> × <span class="text-blue-500">${yH}</span> = <span class="text-orange-500">${a}</span>`,
-          `<span class="text-green-500">${xL}</span> × <span class="text-green-500">${yL}</span> = <span class="text-violet-500">${d}</span>`,
-          `( <span class="text-blue-500">${xH}</span> + <span class="text-green-500">${xL}</span> ) × ( <span class="text-blue-500">${yH}</span> + <span class="text-green-500">${yL}</span> ) - <span class="text-orange-500">${a}</span> - <span class="text-violet-500">${d}</span> = <span class="text-red-700">${e}</span>`,
-          `<span class="text-orange-500">${a}</span> × 10<sup>${
-            m * 2
-          }</sup> + <span class="text-red-700">${e}</span> × 10<sup>${m}</sup> + <span class="text-violet-500">${d}</span> = <b><u>${product}</u></b>`,
-        ],
-      });
+    if (e > 0) {
+      if (product !== initialMultiplicand * initialMultiplier) {
+        steps.push({
+          number: steps.length + 1,
+          equation: [`${xH}${xL}`, `${yH}${yL}`],
+          subSteps: [
+            `<span class="text-blue-500">${xH}</span><span class="text-green-500">${xL}</span> × <span class="text-blue-500">${yH}</span><span class="text-green-500">${yL}</span> = `,
+            `<span class="text-blue-500">${xH}</span> × <span class="text-blue-500">${yH}</span> = <span class="text-orange-500">${a.toLocaleString(
+              "en-us"
+            )}</span>`,
+            `<span class="text-green-500">${xL}</span> × <span class="text-green-500">${yL}</span> = <span class="text-violet-500">${d.toLocaleString(
+              "en-us"
+            )}</span>`,
+            `( <span class="text-blue-500">${xH}</span> + <span class="text-green-500">${xL}</span> ) × ( <span class="text-blue-500">${yH}</span> + <span class="text-green-500">${yL}</span> ) - <span class="text-orange-500">${a}</span> - <span class="text-violet-500">${d}</span> = <span class="text-red-700">${e.toLocaleString(
+              "en-us"
+            )}</span>`,
+            `<span class="text-orange-500">${a}</span> × 10<sup>${
+              m * 2
+            }</sup> + <span class="text-red-700">${e.toLocaleString(
+              "en-us"
+            )}</span> × 10<sup>${m}</sup> + <span class="text-violet-500">${d.toLocaleString(
+              "en-us"
+            )}</span> = <b><u>${product.toLocaleString("en-us")}</u></b>`,
+          ],
+        });
+      } else {
+        steps.push({
+          number: steps.length + 1,
+          equation: [`${xH}${xL}`, `${yH}${yL}`],
+          subSteps: [
+            `<span class="text-gray-500">${initialMultiplicand} × ${initialMultiplier} = `,
+            `${xH} × ${yH} = <span class="text-orange-500">${a.toLocaleString(
+              "en-us"
+            )}</span>`,
+            `${xL} × ${yL} = <span class="text-violet-500">${d.toLocaleString(
+              "en-us"
+            )}</span>`,
+            `${xH + xL} × ${yH + yL} = <span class="text-green-500">${(
+              (xH + xL) *
+              (yH + yL)
+            ).toLocaleString("en-us")}</span>`,
+            `<span class="text-green-500">${(
+              (xH + xL) *
+              (yH + yL)
+            ).toLocaleString(
+              "en-us"
+            )}</span> - <span class="text-orange-500">${a}</span> - <span class="text-violet-500">${d}</span> = <span class="text-red-700">${e.toLocaleString(
+              "en-us"
+            )}</span>`,
+            `<span class="text-orange-500">${a}</span> × 10<sup>${
+              m * 2
+            }</sup> + <span class="text-red-700">${e.toLocaleString(
+              "en-us"
+            )}</span> × 10<sup>${m}</sup> + <span class="text-violet-500">${d.toLocaleString(
+              "en-us"
+            )}</span> = <b><u>${product.toLocaleString("en-us")}</u></b>`,
+          ],
+        });
+      }
+    }
 
     return {
       product,
-      // steps: s.slice(0, s.length - 1),
-      steps: s
+      steps,
     };
   };
 
   const multiply = (e: SyntheticEvent) => {
     e.preventDefault();
 
-    const result = getProduct(parseInt(multiplicand), parseInt(multiplier), []);
+    const result: Test = getProduct(
+      parseInt(multiplicand),
+      parseInt(multiplier),
+      parseInt(multiplicand),
+      parseInt(multiplier),
+      []
+    );
+
+    /* result.steps = result.steps?.filter((step, index) => {
+      return (multiplicand.indexOf(step.equation[0]) !== -1 && multiplier.indexOf(step.equation[1]) !== -1) || index + 1 === (result.steps?.length || 0) - 1;
+    }) */
 
     onProductCalculation(result);
 
-    // console.log("STEPS", result.steps);
+    if (onMultiplicandChange) onMultiplicandChange(multiplicand);
+    if (onMultiplierChange) onMultiplierChange(multiplier);
+
+    setMulitplicand("");
+    setMultiplier("");
   };
 
   return (
@@ -80,6 +183,7 @@ export default function KaratsubaForm({
               <input
                 type="number"
                 onChange={(e) => setMulitplicand(e.target.value)}
+                value={multiplicand}
                 name="multiplicand"
                 id="multiplicand"
                 min={1}
@@ -103,6 +207,7 @@ export default function KaratsubaForm({
               <input
                 type="number"
                 onChange={(e) => setMultiplier(e.target.value)}
+                value={multiplier}
                 name="multiplier"
                 id="multiplier"
                 min={1}

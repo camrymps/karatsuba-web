@@ -24,10 +24,10 @@ export default function KaratsubaProductSteps(
       <div className="mt-8 mb-4">
         <div className="flow-root">
           <ul role="list" className="-mb-2">
-            {steps[0].subSteps.map((subStep: string, index: number) => (
+            {steps[currentStep - 1].subSteps.map((subStep: string, index: number) => (
               <li key={`sub-step-${index}`}>
                 <div className="relative pb-8">
-                  {index + 1 !== steps[0].subSteps.length ? (
+                  {index + 1 !== steps[currentStep - 1].subSteps.length ? (
                     <span
                       className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
                       aria-hidden="true"
@@ -37,7 +37,7 @@ export default function KaratsubaProductSteps(
                     <div>
                       <span
                         className={classNames(
-                            index === 0 ? "bg-blue-500" : index + 1 === steps[0].subSteps.length ? "bg-green-500" : "bg-gray-500",
+                            index === 0 ? "bg-blue-500" : index + 1 === steps[currentStep - 1].subSteps.length ? "bg-green-500" : "bg-gray-500",
                           "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
                         )}
                       >
@@ -46,7 +46,7 @@ export default function KaratsubaProductSteps(
                             className="h-5 w-5 text-white"
                             aria-hidden="true"
                           />
-                        ) : index + 1 === steps[0].subSteps.length ? (
+                        ) : index + 1 === steps[currentStep - 1].subSteps.length ? (
                           <CheckCircleIcon
                             className="h-5 w-5 text-white"
                             aria-hidden="true"
